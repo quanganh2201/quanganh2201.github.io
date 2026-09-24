@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quang Anh Vu</title>
+<meta name="description" content="Quang Anh Vu is a robotics researcher working on deep reinforcement learning, humanoid control and sim-to-real transfer.">
+<meta name="author" content="Quang Anh Vu">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+
+<!-- Social preview. After deploying, make og:image / twitter:image absolute,
+     e.g. https://<user>.github.io/<repo>/og-image.png -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Quang Anh Vu">
+<meta property="og:description" content="Robotics researcher: humanoid control, deep RL and sim-to-real.">
+<meta property="og:image" content="og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="og-image.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Roboto+Slab:wght@400;700&display=swap">
+
+<script>
+  // Apply the saved theme before first paint to avoid a flash.
+  try {
+    var t = localStorage.getItem('theme');
+    if (t === 'dark' || t === 'light') document.documentElement.setAttribute('data-theme', t);
+  } catch (e) {}
+</script>
+
+<style>
+  /* Palette follows the al-folio defaults: magenta accent in light mode, teal in dark. */
+  :root {
+    --bg: #ffffff;
+    --text: #000000;
+    --muted: #6c757d;
+    --line: #e9ecef;
+    --card: #ffffff;
+    --tile: #f4f5f7;
+    --accent: #b509ac;
+    --accent-soft: rgba(181, 9, 172, .08);
+    --shadow: 0 2px 6px rgba(0,0,0,.06), 0 8px 24px rgba(0,0,0,.06);
+  }
+  :root[data-theme="dark"] {
+    --bg: #1c1c1d;
+    --text: #e6e6e6;
+    --muted: #9aa0a6;
+    --line: #333336;
+    --card: #232326;
+    --tile: #2a2a2e;
+    --accent: #2698ba;
+    --accent-soft: rgba(38, 152, 186, .14);
+    --shadow: 0 2px 6px rgba(0,0,0,.35), 0 8px 24px rgba(0,0,0,.3);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #1c1c1d; --text: #e6e6e6; --muted: #9aa0a6; --line: #333336; --card: #232326; --tile: #2a2a2e;
+      --accent: #2698ba; --accent-soft: rgba(38, 152, 186, .14);
+      --shadow: 0 2px 6px rgba(0,0,0,.35), 0 8px 24px rgba(0,0,0,.3);
+    }
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font: 400 16px/1.6 Roboto, system-ui, -apple-system, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    transition: background-color .25s, color .25s;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .container { max-width: 930px; margin: 0 auto; padding: 0 20px; }
+
+  /* ---------- navbar ---------- */
+  .navbar {
+    position: sticky; top: 0; z-index: 30; background: var(--bg);
+    border-bottom: 1px solid var(--line); transition: background-color .25s;
+  }
+  .navbar .container { display: flex; align-items: center; height: 64px; gap: 4px; }
+  .brand { font-size: 19px; color: var(--text); margin-right: auto; white-space: nowrap; }
+  .brand b { font-weight: 700; }
+  .brand:hover { text-decoration: none; color: var(--accent); }
+  .nav-links { display: flex; align-items: center; gap: 2px; }
+  .nav-links a { color: var(--muted); padding: 8px 12px; font-size: 15px; border-radius: 6px; position: relative; }
+  .nav-links a:hover { color: var(--accent); text-decoration: none; }
+  .nav-links a.active { color: var(--accent); font-weight: 500; }
+  .nav-links a.active::after { content: ""; position: absolute; left: 12px; right: 12px; bottom: 2px; height: 2px; background: var(--accent); border-radius: 2px; }
+  #theme-toggle {
+    all: unset; cursor: pointer; width: 38px; height: 38px; display: grid; place-items: center; border-radius: 50%; color: var(--muted);
+  }
+  #theme-toggle:hover, #theme-toggle:focus-visible { color: var(--accent); background: var(--accent-soft); }
+  #theme-toggle svg { width: 20px; height: 20px; }
+  #theme-toggle .moon { display: none; }
+  :root[data-theme="dark"] #theme-toggle .sun { display: none; }
+  :root[data-theme="dark"] #theme-toggle .moon { display: block; }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) #theme-toggle .sun { display: none; }
+    :root:not([data-theme="light"]) #theme-toggle .moon { display: block; }
+  }
+
+  /* ---------- about ---------- */
+  .about { display: grid; grid-template-columns: 1fr 250px; gap: 44px; align-items: start; padding: 48px 0 8px; }
+  .post-title { font: 300 42px/1.15 Roboto, sans-serif; margin: 0 0 6px; }
+  .post-title b { font-weight: 700; }
+  .subtitle { color: var(--muted); margin: 0 0 22px; font-size: 17px; }
+  .about p { margin: 0 0 14px; }
+  .profile { text-align: center; }
+  .profile .pic {
+    position: relative; width: 100%; aspect-ratio: 1; border-radius: 50%; overflow: hidden;
+    background: linear-gradient(135deg, var(--accent), #3b6df0);
+    display: grid; place-items: center; color: #fff; font: 700 72px Roboto, sans-serif; letter-spacing: -.03em;
+    box-shadow: var(--shadow); border: 4px solid var(--card);
+  }
+  .profile .pic img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .profile .address { margin-top: 14px; color: var(--muted); font-size: 14px; line-height: 1.5; }
+  .social { display: flex; justify-content: center; gap: 14px; margin-top: 12px; }
+  .social a { width: 38px; height: 38px; display: grid; place-items: center; border-radius: 50%; color: var(--muted); border: 1px solid var(--line); transition: all .15s; }
+  .social a:hover { color: #fff; background: var(--accent); border-color: var(--accent); text-decoration: none; }
+  .social svg { width: 18px; height: 18px; }
+
+  /* ---------- section headings ---------- */
+  h2.sec { font: 400 26px/1.2 "Roboto Slab", Georgia, serif; margin: 44px 0 18px; padding-bottom: 8px; border-bottom: 2px solid var(--accent); display: inline-block; }
+  .sec-note { color: var(--muted); margin: -6px 0 18px; }
+
+  /* ---------- news ---------- */
+  .news { max-height: 260px; overflow-y: auto; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .news table { width: 100%; border-collapse: collapse; }
+  .news th { text-align: left; white-space: nowrap; vertical-align: top; padding: 10px 18px 10px 0; width: 96px; font-weight: 500; color: var(--accent); }
+  .news td { padding: 10px 0; }
+  .news tr + tr th, .news tr + tr td { border-top: 1px solid var(--line); }
+
+  /* ---------- publications ---------- */
+  .pub { display: grid; grid-template-columns: 210px 1fr; gap: 24px; padding: 22px 0; }
+  .pub + .pub { border-top: 1px solid var(--line); }
+  .preview { min-width: 0; }
+  .media {
+    display: block; position: relative; width: 100%; aspect-ratio: 16 / 10; border-radius: 8px; overflow: hidden;
+    background: var(--tile); border: 1px solid var(--line);
+  }
+  a.media { cursor: pointer; }
+  .media video, .media img { width: 100%; height: 100%; object-fit: cover; display: block; pointer-events: none; }
+  a.media::after {
+    content: ""; position: absolute; right: 8px; bottom: 8px; width: 28px; height: 28px; border-radius: 50%;
+    background: rgba(0,0,0,.6) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='white' d='M9 7v10l8-5z'/%3E%3C/svg%3E") center / 22px no-repeat;
+    transition: transform .15s;
+  }
+  a.media:hover::after { transform: scale(1.15); }
+  .media .tile { width: 100%; height: 100%; display: grid; place-items: center; text-align: center; padding: 10px; color: var(--muted); font-size: 13px; line-height: 1.4; }
+  .media .tile b { display: block; color: var(--text); font-size: 14px; }
+  .abbr {
+    display: inline-block; margin-top: 10px; font-size: 12px; font-weight: 700; letter-spacing: .02em;
+    padding: 3px 10px; border-radius: 4px; background: var(--accent); color: #fff; text-transform: uppercase;
+  }
+  .abbr.plain { background: var(--tile); color: var(--muted); border: 1px solid var(--line); }
+  .title { font-weight: 500; font-size: 17px; line-height: 1.35; margin: 0 0 4px; }
+  .authors { font-size: 14.5px; color: var(--muted); }
+  .authors em { font-style: normal; font-weight: 700; color: var(--text); border-bottom: 1px dotted var(--muted); }
+  .periodical { font-size: 14.5px; font-style: italic; color: var(--muted); margin-bottom: 8px; }
+  .periodical .status { font-style: normal; font-size: 12px; padding: 1px 8px; border-radius: 999px; background: var(--accent-soft); color: var(--accent); margin-left: 6px; }
+  .btns { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .btn {
+    all: unset; cursor: pointer; box-sizing: border-box; display: inline-block;
+    font-size: 12px; font-weight: 500; text-transform: uppercase; letter-spacing: .04em;
+    padding: 3px 10px; border: 1px solid var(--accent); border-radius: 4px; color: var(--accent);
+    transition: background-color .15s, color .15s;
+  }
+  .btn:hover, .btn:focus-visible, .btn[aria-expanded="true"] { background: var(--accent); color: #fff; text-decoration: none !important; }
+  .abstract { display: none; margin-top: 12px; padding: 12px 14px; background: var(--accent-soft); border-radius: 6px; font-size: 14.5px; }
+  .abstract.open { display: block; }
+
+  /* ---------- projects ---------- */
+  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 22px; }
+  .card {
+    background: var(--card); border: 1px solid var(--line); border-radius: 10px; overflow: hidden;
+    display: flex; flex-direction: column; transition: box-shadow .2s, transform .2s;
+  }
+  .card:hover { box-shadow: var(--shadow); transform: translateY(-2px); }
+  .card .media { border-radius: 0; border: 0; border-bottom: 1px solid var(--line); aspect-ratio: 16 / 9; }
+  .card-body { padding: 16px 18px 18px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
+  .card h3 { font: 500 18px/1.3 Roboto, sans-serif; margin: 0; }
+  .card .meta { font-size: 13px; color: var(--muted); }
+  .card p { margin: 4px 0 0; font-size: 14.5px; }
+  .card .btns { margin-top: auto; padding-top: 10px; }
+  .flow { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 6px; font-size: 13px; font-weight: 500; }
+  .flow span.n { padding: 3px 9px; border: 1px solid var(--line); border-radius: 6px; background: var(--card); color: var(--text); }
+  .flow span.n.end { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .flow i { color: var(--accent); font-style: normal; }
+
+  footer { margin-top: 56px; padding: 22px 0 44px; border-top: 1px solid var(--line); color: var(--muted); font-size: 14px; text-align: center; }
+
+  /* ---------- video modal ---------- */
+  #modal { position: fixed; inset: 0; z-index: 60; display: none; place-items: center; background: rgba(0,0,0,.85); padding: 20px; }
+  #modal.open { display: grid; }
+  #modal .box { width: min(960px, 100%); }
+  #modal .stage { position: relative; aspect-ratio: 16 / 9; background: #000; border-radius: 8px; overflow: hidden; }
+  #modal iframe, #modal video { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+  #modal .cap { color: #ddd; font-size: 14px; margin-top: 10px; display: flex; justify-content: space-between; gap: 12px; align-items: center; }
+  #modal button { all: unset; cursor: pointer; color: #fff; font-size: 13px; padding: 3px 12px; border: 1px solid rgba(255,255,255,.5); border-radius: 999px; }
+  #modal button:hover { background: rgba(255,255,255,.15); }
+
+  @media (max-width: 720px) {
+    .about { grid-template-columns: 1fr; gap: 24px; padding-top: 28px; }
+    .profile { order: -1; }
+    .profile .pic { width: 170px; margin: 0 auto; font-size: 56px; }
+    .post-title { font-size: 34px; }
+    .pub { grid-template-columns: 1fr; gap: 14px; }
+    .preview { max-width: 380px; }
+    .nav-links a { padding: 8px 8px; font-size: 14px; }
+    .brand { font-size: 17px; }
+    .news th { width: 78px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    * { transition: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<header class="navbar">
+  <div class="container">
+    <a class="brand" href="#about"><b>Quang Anh</b> Vu</a>
+    <nav class="nav-links" aria-label="Sections">
+      <a href="#about">about</a>
+      <a href="#publications">publications</a>
+      <a href="#projects">projects</a>
+      <a href="cv.pdf">cv</a>
+      <button id="theme-toggle" type="button" aria-label="Toggle light and dark theme" title="Toggle theme">
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+      </button>
+    </nav>
+  </div>
+</header>
+
+<main class="container">
+
+  <!-- ===================== ABOUT ===================== -->
+  <section id="about" class="about">
+    <div>
+      <h1 class="post-title"><b>Quang Anh</b> Vu</h1>
+      <p class="subtitle">Robotic Researcher · Vinmotion</p>
+      <p>
+        I'm a robotics researcher at Vinmotion in Hanoi, working on deep reinforcement learning for humanoid
+        locomotion, motion imitation and recovery, and on getting those policies to run on real robots.
+      </p>
+      <p>
+        I received my B.Sc. in Mechatronics Engineering from
+        <a href="https://en.hust.edu.vn/" target="_blank" rel="noopener">Hanoi University of Science and Technology (HUST)</a>
+        in 2025. Before that, I was an undergraduate research assistant at CVMR Lab, working on perception,
+        navigation and robot arms.
+      </p>
+
+      <h2 class="sec" style="margin-top:30px">latest news</h2>
+      <div class="news">
+        <table>
+          <tr><th>2026</th><td>Two first-author papers under review: <a href="https://ukemi-safefall.github.io/" target="_blank" rel="noopener">Ukemi-SafeFall</a> (Humanoids 2026) and <a href="https://humanoid-research.github.io/AR-FlowZ/" target="_blank" rel="noopener">AR-FlowZ</a> (ICRA 2027).</td></tr>
+          <tr><th>Jun 2025</th><td>Our paper on robot-arm object tracking with deep RL was published in MM Science Journal.</td></tr>
+          <tr><th>May 2025</th><td>I joined Vinmotion as a Robotic Researcher.</td></tr>
+          <tr><th>Oct 2024</th><td>Our paper on stereo-camera obstacle avoidance with deep RL was published in MM Science Journal.</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <aside class="profile">
+      <div class="pic" aria-label="Quang Anh Vu">
+        QA
+        <!-- Put your photo at assets/avatar.jpg; it replaces the monogram automatically. -->
+        <img src="assets/avatar.jpg" alt="Quang Anh Vu" onerror="this.remove()">
+      </div>
+      <div class="address">Hanoi, Vietnam</div>
+      <div class="social">
+        <a href="mailto:vuquanganh2201@gmail.com" title="Email" aria-label="Email">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
+        </a>
+        <a href="https://www.linkedin.com/in/anh-v%C5%A9-quang-31805924b/" target="_blank" rel="noopener" title="LinkedIn" aria-label="LinkedIn">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5ZM3 9.75h4V21H3V9.75Zm6.5 0h3.8v1.6h.06c.53-1 1.83-2.05 3.77-2.05 4.03 0 4.77 2.65 4.77 6.1V21h-4v-4.9c0-1.17-.02-2.68-1.63-2.68-1.63 0-1.88 1.28-1.88 2.6V21h-4V9.75Z"/></svg>
+        </a>
+        <a href="cv.pdf" title="CV" aria-label="CV (PDF)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 13h7M9 17h7"/></svg>
+        </a>
+      </div>
+    </aside>
+  </section>
+
+  <!-- ===================== PUBLICATIONS ===================== -->
+  <section id="publications">
+    <h2 class="sec">publications</h2>
+
+    <article class="pub">
+      <div class="preview">
+        <a class="media vid" href="https://www.youtube.com/watch?v=0mSTzB2-krI&amp;t=4s"
+           data-yt="0mSTzB2-krI" data-start="4" data-end="22" data-cap="Ukemi-SafeFall: hardware demo" aria-label="Play Ukemi-SafeFall hardware demo">
+          <video muted loop playsinline preload="metadata" src="https://ukemi-safefall.github.io/videos/roll_from_platform.mp4"></video>
+        </a>
+        <span class="abbr">Humanoids '26</span>
+      </div>
+      <div>
+        <div class="title">Ukemi-SafeFall: Humanoid Safe Falling &amp; Recovery</div>
+        <div class="authors"><em>Quang Anh Vu</em> et al.</div>
+        <div class="periodical">IEEE-RAS International Conference on Humanoid Robots, 2026 <span class="status">under review</span></div>
+        <div class="btns">
+          <button class="btn" type="button" aria-expanded="false" aria-controls="abs-ukemi" data-abs="abs-ukemi">Abs</button>
+          <a class="btn" href="https://ukemi-safefall.github.io/" target="_blank" rel="noopener">Website</a>
+          <a class="btn vid" href="https://www.youtube.com/watch?v=0mSTzB2-krI&amp;t=4s" data-yt="0mSTzB2-krI" data-start="4" data-end="22" data-cap="Ukemi-SafeFall: hardware demo">Video</a>
+          <a class="btn vid" href="https://ukemi-safefall.github.io/videos/roll_from_platform.mp4" data-mp4="https://ukemi-safefall.github.io/videos/roll_from_platform.mp4" data-cap="Ukemi-SafeFall: recovery from an elevated platform">Sim clip</a>
+        </div>
+        <div class="abstract" id="abs-ukemi">
+          A PPO whole-body fall-and-recovery policy for a 23-DoF, 32 kg humanoid, trained in mjlab / MuJoCo with condition-gated
+          impact-mitigation rewards and a Score-Matching Motion Prior, across 4,096 parallel environments with Generative State
+          Initialization and domain randomization. In simulation it reaches 98% recovery success with a 1.04 s mean time-to-stand,
+          and cuts normalized peak contact force by 32.1% and cumulative peak contact loading by 78.4% versus passive falling.
+          Deployed on physical hardware with a 50 Hz C++ / ONNX Runtime control stack, recovering from kicks, obstacle traversal
+          and elevated-platform falls.
+        </div>
+      </div>
+    </article>
+
+    <article class="pub">
+      <div class="preview">
+        <a class="media vid" href="https://humanoid-research.github.io/AR-FlowZ/assets/videos/Cam_to_walk_edit.mp4"
+           data-mp4="https://humanoid-research.github.io/AR-FlowZ/assets/videos/Cam_to_walk_edit.mp4" data-cap="AR-FlowZ: camera-driven teleoperation into walking" aria-label="Play AR-FlowZ camera demo">
+          <video muted loop playsinline preload="metadata" src="https://humanoid-research.github.io/AR-FlowZ/assets/videos/Cam_to_walk_edit.mp4"></video>
+        </a>
+        <span class="abbr">ICRA '27</span>
+      </div>
+      <div>
+        <div class="title">AR-FlowZ: Autoregressive Riemannian Latent Flows for Latent Skill Sequencing in Behavioral Foundation Models</div>
+        <div class="authors"><em>Quang Anh Vu</em> et al.</div>
+        <div class="periodical">IEEE International Conference on Robotics and Automation (ICRA), 2027 <span class="status">under review</span></div>
+        <div class="btns">
+          <button class="btn" type="button" aria-expanded="false" aria-controls="abs-arflowz" data-abs="abs-arflowz">Abs</button>
+          <a class="btn" href="https://humanoid-research.github.io/AR-FlowZ/" target="_blank" rel="noopener">Website</a>
+          <a class="btn vid" href="https://humanoid-research.github.io/AR-FlowZ/assets/videos/vdsuit_pick_and_place_edit.mp4" data-mp4="https://humanoid-research.github.io/AR-FlowZ/assets/videos/vdsuit_pick_and_place_edit.mp4" data-cap="AR-FlowZ: mocap-suit-driven pick-and-place">Suit demo</a>
+          <a class="btn vid" href="https://humanoid-research.github.io/AR-FlowZ/assets/videos/Cam_to_walk_edit.mp4" data-mp4="https://humanoid-research.github.io/AR-FlowZ/assets/videos/Cam_to_walk_edit.mp4" data-cap="AR-FlowZ: camera-driven teleoperation into walking">Camera demo</a>
+        </div>
+        <div class="abstract" id="abs-arflowz">
+          An autoregressive Riemannian latent-flow sequencer on top of a frozen FB-CPR behavioral foundation model. It generates
+          smooth transitions between latent skills conditioned on state, previous latent, goal and recurrent history, with a
+          SLERP-centered geometric prior on the normalized latent sphere. Distilling the multi-step flow into a one-step endpoint
+          predictor cuts inference from about 100 ms to 3.4 ms (~29× faster), fitting the 20 ms budget of a 50 Hz loop. On a 46 s
+          behavior-switching benchmark it improves transition success to 78.8% (vs. 75.9% direct readout) and lowers peak and p99
+          action rates by 18.8% and 15.8%. Deployed on a Digit humanoid through a ten-link Cartesian interface driven by a mocap
+          suit or a monocular camera, with no per-frame inverse kinematics (mean tracking error 3.4° arms, 11.9° legs).
+        </div>
+      </div>
+    </article>
+
+    <article class="pub">
+      <div class="preview">
+        <div class="media"><div class="tile"><div><b>MM Science Journal</b>June 2025</div></div></div>
+        <span class="abbr plain">MMSJ '25</span>
+      </div>
+      <div>
+        <div class="title">Research on Modeling and Object Tracking for Robot Arm Based on Deep Reinforcement Learning</div>
+        <div class="authors">Anh-Dung Nguyen, Tien-Dat Vu, <em>Quang-Anh Vu</em>, Thai-Viet Dang</div>
+        <div class="periodical">MM Science Journal, 2025</div>
+        <div class="btns">
+          <button class="btn" type="button" aria-expanded="false" aria-controls="abs-arm" data-abs="abs-arm">Abs</button>
+          <a class="btn" href="https://doi.org/10.17973/MMSJ.2025_06_2025059" target="_blank" rel="noopener">DOI</a>
+        </div>
+        <div class="abstract" id="abs-arm">
+          A PPO-based robotic-arm control pipeline combined with a ResNet18-UNet for 2D object localization, enabling obstacle-aware
+          manipulation of objects to target positions; validated in PyBullet via cumulative-reward optimization.
+        </div>
+      </div>
+    </article>
+
+    <article class="pub">
+      <div class="preview">
+        <div class="media"><div class="tile"><div><b>MM Science Journal</b>October 2024</div></div></div>
+        <span class="abbr plain">MMSJ '24</span>
+      </div>
+      <div>
+        <div class="title">Optimal Obstacle Avoidance Strategy Using Deep Reinforcement Learning Based on Stereo Camera</div>
+        <div class="authors">Chi-Hung Nguyen, <em>Quang-Anh Vu</em>, Kim-Khoi Phung Cong, Thai-Viet Dang</div>
+        <div class="periodical">MM Science Journal, 2024</div>
+        <div class="btns">
+          <button class="btn" type="button" aria-expanded="false" aria-controls="abs-stereo" data-abs="abs-stereo">Abs</button>
+          <a class="btn" href="https://doi.org/10.17973/MMSJ.2024_10_2024078" target="_blank" rel="noopener">DOI</a>
+        </div>
+        <div class="abstract" id="abs-stereo">
+          YOLOv8-based stereo-camera obstacle detection combined with a Deep Q-Network to learn collision-free navigation policies
+          for a mobile robot toward a target destination; validated in ROS2 simulation.
+        </div>
+      </div>
+    </article>
+  </section>
+
+  <!-- ===================== PROJECTS ===================== -->
+  <section id="projects">
+    <h2 class="sec">projects</h2>
+
+    <div class="cards">
+      <article class="card">
+        <a class="media vid" href="https://www.youtube.com/watch?v=V_XIjoSKxd0&amp;t=10s"
+           data-yt="V_XIjoSKxd0" data-start="10" data-end="24" data-cap="Locomotion and motion imitation on a 1.7 m humanoid" aria-label="Play locomotion and mimic demo">
+          <img src="https://i.ytimg.com/vi/V_XIjoSKxd0/hqdefault.jpg" alt="Locomotion and mimic demo on a 1.7 m humanoid" loading="lazy">
+        </a>
+        <div class="card-body">
+          <h3>Full-Size Humanoid Locomotion &amp; Motion Imitation</h3>
+          <div class="meta">2026 · 1.7 m humanoid · real hardware</div>
+          <p>Deep RL locomotion and whole-body motion-imitation policies trained in simulation and deployed on a 1.7 m full-size humanoid, closing the sim-to-sim and sim-to-real gaps.</p>
+          <div class="btns">
+            <a class="btn vid" href="https://www.youtube.com/watch?v=V_XIjoSKxd0&amp;t=10s" data-yt="V_XIjoSKxd0" data-start="10" data-end="24" data-cap="Locomotion and motion imitation on a 1.7 m humanoid">Video</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="media">
+          <div class="tile">
+            <div class="flow" aria-label="Pipeline: prompt, ARDY, GMR, BFM-Zero, Motion Mini">
+              <span class="n">prompt</span><i>→</i>
+              <span class="n">ARDY</span><i>→</i>
+              <span class="n">GMR</span><i>→</i>
+              <span class="n">BFM-Zero</span><i>→</i>
+              <span class="n end">Motion Mini</span>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <h3>Language-Driven Humanoid Control (Text to Robot)</h3>
+          <div class="meta">2026 · Motion Mini humanoid · real hardware</div>
+          <p>One sentence becomes robot motion: ARDY generates human motion from text, GMR retargets it to the robot, and the BFM-Zero behavioral foundation model imitates it on the physical robot, with no motion capture needed.</p>
+          <div class="btns">
+            <a class="btn" href="https://research.nvidia.com/labs/sil/projects/ardy/" target="_blank" rel="noopener">ARDY</a>
+            <a class="btn" href="https://github.com/YanjieZe/GMR" target="_blank" rel="noopener">GMR</a>
+            <!-- Add a demo when available:
+            <a class="btn vid" href="assets/text2robot.mp4" data-mp4="assets/text2robot.mp4" data-cap="Text to robot">Video</a> -->
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="container">© 2026 Quang Anh Vu. Layout inspired by <a href="https://github.com/alshedivat/al-folio" target="_blank" rel="noopener">al-folio</a>.</div>
+</footer>
+
+<div id="modal" role="dialog" aria-modal="true" aria-label="Video">
+  <div class="box">
+    <div class="stage" id="stage"></div>
+    <div class="cap"><span id="cap"></span><button type="button" id="close">Close ✕</button></div>
+  </div>
+</div>
+
+<script>
+(function () {
+  var root = document.documentElement;
+
+  // ---- theme toggle (persisted, falls back to the system setting) ----
+  function isDark() {
+    var t = root.getAttribute('data-theme');
+    if (t) return t === 'dark';
+    return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  }
+  document.getElementById('theme-toggle').addEventListener('click', function () {
+    var next = isDark() ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem('theme', next); } catch (e) {}
+  });
+
+  // ---- abstract toggles ----
+  document.querySelectorAll('[data-abs]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var box = document.getElementById(b.dataset.abs);
+      var open = box.classList.toggle('open');
+      b.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+  });
+
+  // ---- video modal (YouTube clip or hosted mp4) ----
+  var modal = document.getElementById('modal');
+  var stage = document.getElementById('stage');
+  var cap = document.getElementById('cap');
+  var lastFocus = null;
+
+  function openVideo(el) {
+    lastFocus = el;
+    stage.innerHTML = '';
+    if (el.dataset.yt) {
+      var p = new URLSearchParams({ autoplay: 1, rel: 0, modestbranding: 1, playsinline: 1 });
+      if (el.dataset.start) p.set('start', el.dataset.start);
+      if (el.dataset.end) p.set('end', el.dataset.end);
+      var f = document.createElement('iframe');
+      f.src = 'https://www.youtube-nocookie.com/embed/' + el.dataset.yt + '?' + p.toString();
+      f.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
+      f.allowFullscreen = true;
+      f.title = el.dataset.cap || 'Video';
+      stage.appendChild(f);
+    } else {
+      var v = document.createElement('video');
+      v.src = el.dataset.mp4; v.controls = true; v.autoplay = true; v.loop = true; v.playsInline = true;
+      stage.appendChild(v);
+    }
+    cap.textContent = el.dataset.cap || '';
+    modal.classList.add('open');
+    document.getElementById('close').focus();
+  }
+  function closeVideo() {
+    modal.classList.remove('open');
+    stage.innerHTML = '';
+    if (lastFocus) lastFocus.focus();
+  }
+  document.querySelectorAll('.vid').forEach(function (a) {
+    a.addEventListener('click', function (e) {
+      if (e.metaKey || e.ctrlKey || e.shiftKey) return; // allow open-in-new-tab
+      e.preventDefault();
+      openVideo(a);
+    });
+  });
+  document.getElementById('close').addEventListener('click', closeVideo);
+  modal.addEventListener('click', function (e) { if (e.target === modal) closeVideo(); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && modal.classList.contains('open')) closeVideo(); });
+
+  // ---- preview clips play (muted, looping) only while on screen ----
+  var clips = document.querySelectorAll('.media video');
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if ('IntersectionObserver' in window && !reduce) {
+    var io = new IntersectionObserver(function (es) {
+      es.forEach(function (e) {
+        if (e.isIntersecting) { e.target.play().catch(function () {}); } else { e.target.pause(); }
+      });
+    }, { threshold: 0.4 });
+    clips.forEach(function (v) { io.observe(v); });
+  }
+
+  // ---- highlight the current section in the navbar ----
+  if ('IntersectionObserver' in window) {
+    var links = {};
+    document.querySelectorAll('.nav-links a[href^="#"]').forEach(function (a) { links[a.getAttribute('href').slice(1)] = a; });
+    var so = new IntersectionObserver(function (es) {
+      es.forEach(function (e) {
+        if (e.isIntersecting) {
+          Object.keys(links).forEach(function (k) { links[k].classList.toggle('active', k === e.target.id); });
+        }
+      });
+    }, { rootMargin: '-35% 0px -60% 0px' });
+    document.querySelectorAll('main section[id]').forEach(function (s) { so.observe(s); });
+  }
+})();
+</script>
+</body>
+</html>
